@@ -60,7 +60,7 @@ class Highrise {
 
     /**
      * Make a call on the highrise api
-     * 
+     *
      * @param  string                           The url to fetch
      * @return SimpleXMLElement|null            The response from the api, null if something went wrong
      */
@@ -80,7 +80,7 @@ class Highrise {
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        
+
         // set the url
         curl_setopt($curl, CURLOPT_URL, $url);
 
@@ -102,38 +102,29 @@ class Highrise {
 
     /**
      * Get the company information from highrise
-     * 
-     * @param  int                          The Highrise company identifier
-     * @return \Company|null                The company from highrise, null whenever there is no company
+     *
+     * @param  int                                  The Highrise company identifier
+     * @return \Weblab\Highrise\Company|null        The company from highrise, null whenever there is no company
      */
     public function company($id) {
         // get the company information from highrise
-        return \Tpw_Controller_Helper_Highrise_Company::load($this, $id);
-    }
-
-    /**
-     * Get the highrise users
-     *
-     * @return Tpw_Controller_Helper_Highrise_Users                 The highrise users
-     */
-    public function users() {
-        return new Tpw_Controller_Helper_Highrise_Users($this);
+        return \Weblab\Highrise\Company::get($this, $id);
     }
 
     /**
      * Return true whenever it is possible to call the highrise api (10 calls
      * every 5 seconds are allowed)
-     * 
+     *
      * @return boolean
      */
     private function readyForCall() {
         // get the total time
         $totalTime = $this->totalTime();
-        
+
         // get whether it is possible to make a call (not possible if less than
         // 5 seconds have past and the number of calls above 10 already
         $canNotCall = ($totalTime < 10 && $this->totalCalls > 500);
-        
+
         // if it is not possible to call, wait till we can call again
         if ($canNotCall) {
             sleep(10 - $totalTime);
@@ -145,17 +136,17 @@ class Highrise {
             // reset the time
             $this->resetTimer();
         }
-        
+
         // add 1 to the total number of calls made
         $this->totalCalls++;
-        
+
         // done, return
         return true;
     }
-    
+
     /**
      * Get the total run time since the start of the timer
-     * 
+     *
      * @return float            The total time
      */
     private function totalTime() {
@@ -163,11 +154,11 @@ class Highrise {
         if ($this->totalTime == 0) {
             return $this->totalTime;
         }
-        
+
         // the timer is running, return the total time
         return microtime(true) - $this->totalTime;
     }
-    
+
     /**
      * Reset the timer and total number of calls made
      */

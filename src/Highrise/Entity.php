@@ -5,14 +5,14 @@ namespace Weblab\Highrise;
 /**
  * Abstract base class for a Highrise entity, adding functionality to perform
  * CRUD operations ont the Highrise entity.
- * 
+ *
  * @author Weblab.nl - Thomas Marinissen
  */
 abstract class Entity {
-    
+
     /**
      * The Highrise API instance
-     * 
+     *
      * @var \Weblab\Highrise
      */
     protected $highriseApi;
@@ -23,14 +23,14 @@ abstract class Entity {
      * @var null|int
      */
     protected $id = null;
-    
+
     /**
      * The entity information
-     * 
+     *
      * @var \SimpleXMLElement
      */
     protected $entity;
-    
+
     /**
      * Constructor
      *
@@ -43,28 +43,28 @@ abstract class Entity {
 
         // store the identifier
         $this->id = $id;
-        
+
         // set the entity base
-        $entity = new \SimpleXMLElement(static::ENTITY_NAME);
+        $entity = new \SimpleXMLElement('<' . static::ENTITY_NAME . '/>');
 
         // if a entity id was given, get the entity
         if (!is_null($id)) {
             // get the entity from the highrise api
-            $entity = $this->$highriseApi->call(static::NAME . '/' . $id . '.xml');
+            $entity = $this->api()->call(static::NAME . '/' . $id . '.xml');
         }
-        
+
         // if there is no valid entity, throw an exception
         if (is_null($entity)) {
             throw new \Exception('Not possible to request the ' . static::NAME);
         }
-        
+
         // set the entity
         $this->entity = $entity;
     }
-    
+
     /**
      * Magic getter method
-     * 
+     *
      * @param   string                              The name of the getter
      * @return  mixed                               The value to get
      */
@@ -73,7 +73,7 @@ abstract class Entity {
         if (!isset($this->entity->{$name})) {
             return null;
         }
-        
+
         // return the value for the given name
         return $this->entity->{$name};
     }
@@ -104,14 +104,14 @@ abstract class Entity {
     public static function get(\Weblab\Highrise $highrise, $id = null) {
         // get the name of the called class
         $className = get_called_class();
-        
+
         // try getting the entity for the given id from the Highrise API
         try {
             $entity = new $className($highrise, $id);
         } catch (\Exception $e) {
             return null;
         }
-        
+
         // done, evertying is all right, return the highrise entity
         return $entity;
     }
@@ -140,7 +140,7 @@ abstract class Entity {
      * @param   string                              The url to fetch
      * @return  \Weblab\Highrise\Entity[]           A collection of highrise entities
      */
-    protected function allForUrl($url) {
+    protected function allForUrl($class, $url) {
         // set the offset
         $offset = 0;
 
@@ -150,16 +150,17 @@ abstract class Entity {
         // get all the sub entities
         while (true) {
             // load the entities for the current iteration
-            $entitiesHighrise = $this->highriseApi()->call($url . '?n=' . $offset);
+            $entitiesHighrise = $this->api()->call($url . '?n=' . $offset);
 
             // if there are no entities, break out
             if (is_null($entitiesHighrise)) {
                 break;
             }
 
+            // get all the the children of the collection and create an Entity for every highrise xml element
             foreach ($entitiesHighrise->children() as $highriseEntity) {
                 // create a new entity object to store the data of the current iteration
-                $entity = self::get($this->api);
+                $entity = $class::get($this->api());
 
                 // if it was not possible to create an entity, continue
                 if (is_null($entity)) {

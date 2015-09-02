@@ -21,7 +21,7 @@ class Company extends \Weblab\Highrise\Entity {
 
     /**
      * Load the company notes
-     * 
+     *
      * @return \Weblab\Highrise\Note[]              The company notes
      */
     public function notes() {
@@ -37,12 +37,12 @@ class Company extends \Weblab\Highrise\Entity {
         $url = 'companies/' . $id . '/' . \Weblab\Highrise\Note::NAME .'.xml';
 
         // done, return the tasks
-        return $this->allForUrl($url);
+        return $this->allForUrl('\Weblab\Highrise\Note', $url);
     }
 
     /**
      * Load the company emails
-     * 
+     *
      * @return \Weblab\Highrise\Email[]              The company emails
      */
     public function emails() {
@@ -58,7 +58,7 @@ class Company extends \Weblab\Highrise\Entity {
         $url = 'companies/' . $id . '/' . \Weblab\Highrise\Email::NAME .'.xml';
 
         // done, return the tasks
-        return $this->allForUrl($url);
+        return $this->allForUrl('\Weblab\Highrise\Email', $url);
     }
 
     /**
@@ -79,6 +79,6 @@ class Company extends \Weblab\Highrise\Entity {
         $url = 'companies/' . $id . '/' . \Weblab\Highrise\Task::NAME .'.xml';
 
         // done, return the tasks
-        return $this->allForUrl($url);
+        return $this->allForUrl('\Weblab\Highrise\Task', $url);
     }
 }
