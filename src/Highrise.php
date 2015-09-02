@@ -99,7 +99,6 @@ class Highrise {
         return simplexml_load_string($response);
     }
 
-
     /**
      * Get the company information from highrise
      *

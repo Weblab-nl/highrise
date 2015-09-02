@@ -185,4 +185,13 @@ abstract class Entity {
         return $entities;
     }
 
+    /**
+     * Return the entity as XML
+     *
+     * @return string
+     */
+    public function __toString() {
+        return $this->entity->asXML();
+    }
+
 }
